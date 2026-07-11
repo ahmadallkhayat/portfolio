@@ -23,11 +23,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="index.css?v=4">
+    <link rel="stylesheet" href="index.css?v=5">
 </head>
 <body class="dark-theme">
+    <!-- Scroll progress bar -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+
     <!-- Grid Background -->
     <div class="dot-grid"></div>
+    <div class="aurora" aria-hidden="true"></div>
 
     <!-- Navigation Header -->
     <header class="header">
@@ -36,7 +40,7 @@
                 <span class="logo-accent">&lt;</span>AHMAD<span class="logo-accent"> /&gt;</span>
             </a>
             <nav class="nav" aria-label="Main Navigation">
-                <ul class="nav-list">
+                <ul class="nav-list" id="nav-list">
                     <li><a href="#about" class="nav-link">About</a></li>
                     <li><a href="#skills" class="nav-link">Skills</a></li>
                     <li><a href="#projects" class="nav-link">Projects</a></li>
@@ -46,16 +50,21 @@
                     <li><a href="#contact" class="nav-link contact-btn">Contact</a></li>
                 </ul>
             </nav>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-list">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </header>
+    <div class="nav-overlay" id="nav-overlay"></div>
 
     <!-- Main Content -->
     <main>
         <!-- Hero Section -->
         <section id="hero" class="hero-section">
+            <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
             <div class="container hero-container">
                 <div class="hero-avatar">
-                    <img src="assets/ahmad.jpg" alt="Portrait of Ahmad, Full-Stack Software Engineer" width="180" height="180" loading="eager">
+                    <img src="assets/ahmad.jpg" alt="Portrait of Ahmad, Computer Engineer & IT Specialist" width="180" height="180" loading="eager">
                 </div>
                 <div class="badge-container">
                     <span class="status-badge"><span class="pulse-dot"></span> Available for Select Projects</span>
@@ -63,6 +72,10 @@
                 <h1 class="hero-title">
                     Building Cross-Platform <span class="gradient-text">Apps</span> & Full-Stack <span class="gradient-text">Systems</span>
                 </h1>
+                <div class="hero-role">
+                    <span class="hero-role-prompt">&gt;</span>
+                    <span class="hero-role-text" id="role-text"></span><span class="type-caret"></span>
+                </div>
                 <p class="hero-subtitle">
                     Computer Engineer &amp; IT Specialist with 5+ years shipping cross-platform iOS, Android &amp; Web apps in Flutter/Dart — backed by Laravel/Node systems, Python automation, and hands-on IT infrastructure. Based in Erbil, Iraq.
                 </p>
@@ -71,13 +84,32 @@
                     <a href="assets/Ahmad-Salahaddin-Resume.pdf" class="btn btn-secondary" download>Download Resume</a>
                     <a href="#terminal" class="btn btn-secondary">Run CLI Demo</a>
                 </div>
+                <div class="hero-stats" id="hero-stats">
+                    <div class="stat">
+                        <span class="stat-num"><span class="stat-count" data-target="5">0</span>+</span>
+                        <span class="stat-label">Years Experience</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num"><span class="stat-count" data-target="7">0</span></span>
+                        <span class="stat-label">Projects Shipped</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num"><span class="stat-count" data-target="5">0</span></span>
+                        <span class="stat-label">Platforms</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-num"><span class="stat-count" data-target="4">0</span></span>
+                        <span class="stat-label">Languages</span>
+                    </div>
+                </div>
             </div>
+            <a href="#about" class="scroll-cue" aria-label="Scroll down"><span></span></a>
         </section>
 
         <!-- About / Profile Summary -->
         <section id="about" class="about-section">
             <div class="container">
-                <h2 class="section-title">About Me</h2>
+                <h2 class="section-title" data-index="01">About Me</h2>
                 <div class="about-grid">
                     <div class="about-card glass">
                         <p class="about-text">
@@ -97,7 +129,7 @@
         <!-- Skills Section -->
         <section id="skills" class="skills-section">
             <div class="container">
-                <h2 class="section-title">Technical Expertise</h2>
+                <h2 class="section-title" data-index="02">Technical Expertise</h2>
                 <div class="skills-grid">
                     <div class="skills-card glass hover-glow" id="skill-apps">
                         <div class="card-icon">
@@ -176,7 +208,7 @@
         <section id="projects" class="projects-section">
             <div class="container">
                 <div class="section-header-flex">
-                    <h2 class="section-title">Featured Projects</h2>
+                    <h2 class="section-title" data-index="03">Featured Projects</h2>
                     <div class="filter-container">
                         <button class="filter-btn active" data-filter="all">All</button>
                         <button class="filter-btn" data-filter="web">Web & Backend</button>
@@ -283,7 +315,7 @@
         <!-- Interactive Terminal Section -->
         <section id="terminal" class="terminal-section">
             <div class="container">
-                <h2 class="section-title">Interactive Terminal Demo</h2>
+                <h2 class="section-title" data-index="04">Interactive Terminal Demo</h2>
                 <p class="section-subtitle">Query my engineering experience directly. Type <code class="terminal-code-tag">help</code> or <code class="terminal-code-tag">projects</code> to interact.</p>
                 
                 <div class="terminal-window glass">
@@ -312,7 +344,7 @@
         <!-- Experience Timeline Section -->
         <section id="timeline" class="timeline-section">
             <div class="container">
-                <h2 class="section-title">Work Experience</h2>
+                <h2 class="section-title" data-index="05">Work Experience</h2>
                 <div class="timeline">
                     <div class="timeline-item left">
                         <div class="timeline-content glass">
@@ -345,7 +377,7 @@
         <!-- Education & Languages Section -->
         <section id="education" class="education-section">
             <div class="container">
-                <h2 class="section-title">Education &amp; Languages</h2>
+                <h2 class="section-title" data-index="06">Education &amp; Languages</h2>
                 <div class="education-grid">
                     <div class="edu-card glass hover-glow">
                         <span class="edu-period">2022 – 2026</span>
@@ -386,7 +418,7 @@
         <!-- Contact Section -->
         <section id="contact" class="contact-section">
             <div class="container contact-container">
-                <h2 class="section-title">Get In Touch</h2>
+                <h2 class="section-title" data-index="07">Get In Touch</h2>
                 <p class="contact-text">
                     Have a project in mind — a cross-platform app, a full-stack system, or IT infrastructure work? I'm based in Erbil, Iraq and available for select projects. Let's connect.
                 </p>
@@ -431,7 +463,12 @@
         </div>
     </footer>
 
+    <!-- Back to top -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+
     <!-- Custom JS -->
-    <script src="index.js?v=4"></script>
+    <script src="index.js?v=5"></script>
 </body>
 </html>

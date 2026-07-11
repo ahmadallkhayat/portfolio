@@ -174,3 +174,223 @@ LANGUAGES: Kurdish (Native), English (Advanced), Arabic (Advanced), Turkish (Bas
         }
     }
 });
+
+// ==========================================================================
+// ✦ POLISH LAYER — motion, reveals, particles & interactions
+// ==========================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canHover = window.matchMedia('(hover: hover)').matches;
+
+    // ---- Scroll progress bar ----
+    const progress = document.getElementById('scroll-progress');
+    const onScrollProgress = () => {
+        const h = document.documentElement;
+        const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+        if (progress) progress.style.width = `${Math.min(scrolled * 100, 100)}%`;
+    };
+    window.addEventListener('scroll', onScrollProgress, { passive: true });
+    onScrollProgress();
+
+    // ---- Mobile nav drawer ----
+    const navToggle = document.getElementById('nav-toggle');
+    const navList = document.getElementById('nav-list');
+    const navOverlay = document.getElementById('nav-overlay');
+    const setNav = (open) => {
+        if (!navToggle || !navList) return;
+        navToggle.classList.toggle('open', open);
+        navList.classList.toggle('open', open);
+        if (navOverlay) navOverlay.classList.toggle('active', open);
+        navToggle.setAttribute('aria-expanded', String(open));
+        document.body.style.overflow = open ? 'hidden' : '';
+    };
+    if (navToggle) navToggle.addEventListener('click', () => setNav(!navList.classList.contains('open')));
+    if (navOverlay) navOverlay.addEventListener('click', () => setNav(false));
+    if (navList) navList.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => setNav(false)));
+
+    // ---- Scroll spy (active nav link) ----
+    const sections = document.querySelectorAll('main section[id]');
+    const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+    const spy = () => {
+        const pos = window.scrollY + window.innerHeight * 0.3;
+        let current = '';
+        sections.forEach(s => { if (pos >= s.offsetTop) current = s.id; });
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${current}`));
+    };
+    window.addEventListener('scroll', spy, { passive: true });
+    spy();
+
+    // ---- Scroll reveal with stagger ----
+    const revealTargets = [
+        '.about-card', '.section-title', '.skills-card', '.project-card',
+        '.timeline-item', '.edu-card', '.lang-card', '.contact-card',
+        '.terminal-window', '.section-subtitle', '.languages-title', '.hero-stats'
+    ];
+    const groups = {};
+    revealTargets.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+            el.classList.add('reveal');
+            const arr = (groups[sel] = groups[sel] || []);
+            arr.push(el);
+        });
+    });
+    // stagger siblings within each selector group
+    Object.values(groups).forEach(arr => {
+        arr.forEach((el, i) => { el.style.setProperty('--d', `${Math.min(i * 70, 420)}ms`); });
+    });
+
+    if (reduceMotion) {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+    } else {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    }
+
+    // ---- Animated stat counters ----
+    const counters = document.querySelectorAll('.stat-count');
+    const runCounter = (el) => {
+        const target = parseInt(el.dataset.target, 10) || 0;
+        if (reduceMotion) { el.textContent = target; return; }
+        const dur = 1400;
+        let start = null;
+        const step = (ts) => {
+            if (start === null) start = ts;
+            const p = Math.min((ts - start) / dur, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(eased * target);
+            if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+    };
+    if (counters.length) {
+        const cio = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { runCounter(e.target); cio.unobserve(e.target); } });
+        }, { threshold: 0.6 });
+        counters.forEach(c => cio.observe(c));
+    }
+
+    // ---- Typing role rotator ----
+    const roleEl = document.getElementById('role-text');
+    if (roleEl) {
+        const roles = [
+            'Computer Engineer',
+            'IT Specialist',
+            'Cross-Platform App Developer',
+            'Flutter & Dart Engineer',
+            'Full-Stack Developer'
+        ];
+        if (reduceMotion) {
+            roleEl.textContent = roles[0];
+        } else {
+            let ri = 0, ci = 0, deleting = false;
+            const tick = () => {
+                const word = roles[ri];
+                ci += deleting ? -1 : 1;
+                roleEl.textContent = word.slice(0, ci);
+                let delay = deleting ? 45 : 90;
+                if (!deleting && ci === word.length) { delay = 1500; deleting = true; }
+                else if (deleting && ci === 0) { deleting = false; ri = (ri + 1) % roles.length; delay = 350; }
+                setTimeout(tick, delay);
+            };
+            tick();
+        }
+    }
+
+    // ---- Hero particle constellation ----
+    const canvas = document.getElementById('hero-canvas');
+    if (canvas && !reduceMotion) {
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [], raf, mouse = { x: null, y: null };
+        const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+        const resize = () => {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            w = rect.width; h = rect.height;
+            canvas.width = w * DPR; canvas.height = h * DPR;
+            canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            const count = Math.round(Math.min(90, Math.max(28, (w * h) / 16000)));
+            particles = Array.from({ length: count }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                r: Math.random() * 1.8 + 0.6
+            }));
+        };
+
+        const draw = () => {
+            ctx.clearRect(0, 0, w, h);
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > w) p.vx *= -1;
+                if (p.y < 0 || p.y > h) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(150, 120, 255, 0.55)';
+                ctx.fill();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const q = particles[j];
+                    const dx = p.x - q.x, dy = p.y - q.y;
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+                        ctx.strokeStyle = `rgba(120, 180, 220, ${0.16 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+                if (mouse.x !== null) {
+                    const dx = p.x - mouse.x, dy = p.y - mouse.y;
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < 160) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
+                        ctx.strokeStyle = `rgba(160, 130, 255, ${0.28 * (1 - dist / 160)})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+            raf = requestAnimationFrame(draw);
+        };
+
+        const heroSection = document.getElementById('hero');
+        heroSection.addEventListener('mousemove', (e) => {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top;
+        });
+        heroSection.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+        window.addEventListener('resize', resize);
+        resize();
+        draw();
+    }
+
+    // ---- 3D tilt on cards (desktop only) ----
+    if (canHover && !reduceMotion) {
+        document.querySelectorAll('.skills-card, .project-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const r = card.getBoundingClientRect();
+                const px = (e.clientX - r.left) / r.width - 0.5;
+                const py = (e.clientY - r.top) / r.height - 0.5;
+                card.style.transform = `perspective(800px) rotateX(${-py * 5}deg) rotateY(${px * 5}deg) translateY(-4px)`;
+            });
+            card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+        });
+    }
+
+    // ---- Back to top ----
+    const toTop = document.getElementById('back-to-top');
+    if (toTop) {
+        window.addEventListener('scroll', () => {
+            toTop.classList.toggle('show', window.scrollY > 600);
+        }, { passive: true });
+        toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
+    }
+});
