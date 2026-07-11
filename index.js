@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
 
             case 'about':
-                appendTerminalLine(`Ahmad Salahaddin | Software Developer, IT Engineer & Cross-Platform App Developer<br>
+                appendTerminalLine(`Ahmad Salahaddin | Computer Engineer & IT Specialist<br>
 5+ years building and deploying cross-platform apps (iOS, Android, Web) with Flutter/Dart, backed by Laravel/Node systems and Python automation. Experienced across construction, retail, and hospitality sectors, plus full IT infrastructure management. B.Sc. Computer Engineering (Lebanese French University, 2026). Based in Erbil, Iraq.`);
                 break;
 
