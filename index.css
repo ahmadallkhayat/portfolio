@@ -568,6 +568,14 @@ a {
     color: hsl(var(--accent-primary));
 }
 
+.project-link-disabled {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: hsl(var(--text-muted));
+    font-family: 'Fira Code', monospace;
+    letter-spacing: -0.01em;
+}
+
 /* Card filter animations classes */
 .project-card.fade-out {
     opacity: 0;
