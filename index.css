@@ -1199,7 +1199,10 @@ a {
     height: 100%;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.9;
+    opacity: 0.85;
+    /* Fade particles out of the central text column — keep them at the edges */
+    -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 48%, transparent 40%, rgba(0, 0, 0, 0.45) 66%, #000 88%);
+    mask-image: radial-gradient(ellipse 62% 58% at 50% 48%, transparent 40%, rgba(0, 0, 0, 0.45) 66%, #000 88%);
 }
 
 .hero-container {
