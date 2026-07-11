@@ -1276,12 +1276,9 @@ a {
     color: hsl(var(--text-muted));
 }
 
-/* Scroll cue */
 .scroll-cue {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    margin-top: var(--space-8);
     width: 26px;
     height: 42px;
     border: 2px solid hsl(var(--text-muted));
