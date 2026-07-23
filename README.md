@@ -39,22 +39,23 @@ Then visit `http://localhost:8000`.
 
 ## 🌍 GitHub Pages Deployment
 
-1. Create a new public repository on GitHub named `portfolio` (or make it the user's root repository `<username>.github.io`).
-2. Push this local directory to the repository:
+This repository is named `ahmadallkhayat.github.io`, GitHub's special naming convention for a user site — pages built from it are served at the account root rather than under a repo-name subpath.
+
+1. Push this local directory to the repository:
    ```bash
    git init
    git branch -M main
    git add .
    git commit -m "Initial commit: portfolio launch"
-   git remote add origin https://github.com/ahmadallkhayat/portfolio.git
+   git remote add origin https://github.com/ahmadallkhayat/ahmadallkhayat.github.io.git
    git push -u origin main
    ```
-3. In your GitHub repository:
+2. In your GitHub repository:
    * Go to **Settings** -> **Pages**.
    * Under **Build and deployment** -> **Source**, select **Deploy from a branch**.
    * Under **Branch**, select `main` and `/root`.
    * Click **Save**.
-4. The portfolio will be live at `https://ahmadallkhayat.github.io/portfolio/`.
+3. The portfolio will be live at `https://ahmadallkhayat.github.io/`.
 
 ---
 
